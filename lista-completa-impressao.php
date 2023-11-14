@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<?php
+  function salvarDadosEmJSON($dados, $arquivo)
+  {
+      $jsonData = json_encode($dados, JSON_PRETTY_PRINT);
+      file_put_contents($arquivo, $jsonData);
+  }
+
+  $inicio = 0;
+  $totalPages = 0;
+
+  $jsonFile = file_get_contents('ticar.json');
+  // Decodifica o JSON em um array associativo
+  $data = json_decode($jsonFile, true);
+
+  $arquivoJSON = 'pages.json';
+  $dados = file_exists($arquivoJSON) ? json_decode(file_get_contents($arquivoJSON), true) : [];
+
+  // Adiciona os dados ao array
+  $fim = $dados['fim'];
+  
+  // Paginas
+  
+  // if(isset($_POST['next']))
+  // {
+   
+  //   // echo "Total <br>";
+  //   // echo count($data);
+
+  //   // print_r($data);
+
+  //   $fim = $_POST['fim'];
+
+  //   $arquivoJSON = 'pages.json';
+  //   $dados = file_exists($arquivoJSON) ? json_decode(file_get_contents($arquivoJSON), true) : [];
+
+  //   $inicio = $fim;
+  //   // Adiciona os dados ao array
+  //   $fim = $fim + 4;
+
+  //   $dados['fim'] = $fim; 
+
+  //   // echo "next ". $fim;
+
+  //   // Salva os dados em um arquivo JSON
+  //   salvarDadosEmJSON($dados, $arquivoJSON);
+  // }
+  // if(isset($_POST['prev']))
+  // {
+   
+    // $fim = $_POST['fim'];
+
+    if($fim > 4) {
+
+    $inicio = $fim - 4;
+
+    $dados['fim'] = $fim;
+
+
+    // echo "prev ". $inicio;
+
+    // Salva os dados em um arquivo JSON
+    salvarDadosEmJSON($dados, $arquivoJSON);
+    }
+  // }
+?>
+
+<!-- Fim Paginas -->
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+
+    <style>
+        a {
+          text-decoration: none;
+          color: #fff;
+        }
+
+        table {
+          text-align: center;
+          width: 55% !important;
+          margin-left: 8px;
+        }
+
+        table, th, td {
+          border: 1px solid rgba(0,0,0,0.5); /* Isso define bordas de 1px para a tabela, células de cabeçalho e células de dados */
+        }
+
+      
+        /* .table-header td {
+          padding: 0 10px;
+          border-right: 2px solid #000;
+        } */
+      
+        /* .td-end {
+          border-right: 2px solid #272727;
+          
+        } */
+
+        #filtro:focus {
+            outline: none;
+        }
+
+        .filtrar {
+            border: 1px solid rgba(0,0,0,0.3);
+            border-radius: 2em;
+            overflow: hidden;
+        }
+
+        .filtrar span {
+            opacity: 0.5;
+        }
+
+        .active {
+          background-color: red;
+        }
+
+        .input_txt {
+          width: 120px;
+          border: none;
+          border-bottom: 1px solid #000;
+          font-size: 15px;
+          margin-top: 10px;
+        }
+
+        .conteudo {
+          font-size: 9px !important;
+        }
+
+        .cabecalho {
+          font-size: 7px !important;
+        }
+
+
+      </style>
+</head>
+<body>
+
+        <p class="ps-2 m-0 mt-4">
+        A Pagina esta sendo guardada...
+        </p>
+        <div class="d-flex mb-2 pt-4 px-2">
+          
+          <div class="col-2">
+                <button class="btn btn-sm btn-dark" style="background-color: #707070;" onclick="goBack()">
+                  〈 voltar
+                </button>
+          </div>  
+          <div class="col-5 invisible">
+            <button class="btn btn-sm btn-success">Imprimir</button>
+          </div>
+          <div class="col-2 invisible">
+            <div style="position: relative;">
+              <div class="filtrar">
+                  <input class="col-9 p-1 ps-3" type="text" id="filtro" placeholder="Digite um nome" style="padding: 0.28em; border: none;">
+                  <span><img src="assets/procurar.png" alt="" style="width: 35px;"></span>
+              </div>
+              <div class="col-12 py-1" id="nomes-lista" style="display: none; position: absolute; background: #a7a7a7;"></div>
+          </div>
+          </div>
+
+          <!-- Next Page -->
+          <?php
+             $jsonFile = file_get_contents('pages.json');
+             // Decodifica o JSON em um array associativo
+             $data = json_decode($jsonFile, true);
+
+             $page = $data['fim'];
+
+          ?>
+
+          <div class="col-3 text-end d-none" style="padding-top: 0.45em;">
+            <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
+              
+            <!-- Fim -->
+              <input type="text" class="d-none" value="<?php echo $page; ?>" name="fim">
+            <!-- End Fim -->
+
+              <input type="submit" class="btn btn-sm btn-dark px-3" name="prev" value="〈"> <span id="inicio"></span> - <span id="fim"></span> 
+              <input type="submit" class="btn btn-sm btn-dark px-3" name="next" value="〉"> de <span id="pages"></span></div>
+            </form>
+          </div>
+          <!-- Prev Page -->
+
+        <div id="meuConteudo" class="table-responsive py-2 conteudo" style='height: 100vh;'>
+        <div style="width: 55%;">
+          <div class="row px-4 cabecalho" style="font-style: italic;">
+              <div class="col-3 text-center" style="display: flex; justify-content: start;">
+                  <div>
+                    <div>
+                      <img src="assets/logo2.jpg" alt="" width="30">
+                    </div>
+                    <div>
+                      <p style="font-size: 0.6em;" class="m-0"><b>IGREJA ADVENTISTA DO SÉTIMO DIA <br> MISSÃO SUL</b></p>
+                    </div>
+                  </div>
+              </div>
+              <div class="col-9 text-center" style="display: flex; justify-content: end;">
+              <div>
+                    <div class="invisible">
+                      <img src="assets/logo2.jpg" alt="" width="30">
+                    </div>
+                    <div>
+                      <p style="font-size: 0.6em;" class="m-0"><b>MINISTÉRIO DE MORDOMIA CRISTÃ</b></p>
+                    </div>
+                  </div>
+              </div>
+          </div>
+
+          <div class="text-center">
+            <h5 class="pb-2" style="font-size: 0.9em;">LIVRO DE CONTROLE DE FIDELIDADE DOS MEMBROS</h5>
+          </div>
+
+          <div>
+            <div class="row col-11 mx-auto mb-3 py-1 border border-dark border-2 conteudo">
+                <div class="col-3">
+                  <div><b>Igreja:</b></div>
+                  <div class="input_txt"></div>
+                </div>
+                <div class="col-3">
+                  <div ><b>Distrito:</b></div>
+                  <div class="input_txt"></div>
+                </div>
+                <div class="col-3">
+                  <div ><b>Cidade:</b></div>
+                  <div class="input_txt"></div>
+                </div>
+                <div class="col-3">
+                  <div ><b>Ano:</b></div>
+                  <div class="input_txt"></div>
+                </div>
+               
+            </div>
+          </div>
+        </div>  
+        <table class="col-12" style="border: 2px solid #000; font-size: 0.8em;">
+        
+            <tr class="table-header">
+              <td class="d-none">#</td>
+              <td colspan="2">Meses</td>
+              <td colspan="5">janeiro</td>
+              <td colspan="5">Fevereiro</td>
+              <td colspan="5">Março</td>
+    
+              <td colspan="5">Abril</td>
+              <td colspan="5">Maio</td>
+              <td colspan="5">Junho</td>
+    
+              <td colspan="5">Julho</td>
+              <td colspan="5">Agosto</td>
+              <td colspan="5">Setembro</td>
+    
+              <td colspan="5">Outubro</td>
+              <td colspan="5">Novembro</td>
+              <td colspan="5">Dezembro</td>
+            </tr>
+            <tr>
+              <td class="td-end d-none">Nº</td>
+              <td class="td-end" colspan="2">
+                <div>
+                  Nome
+                </div>
+              </td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+              
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+    
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td class="td-end">5</td>
+
+<?php
+  $jsonFile = file_get_contents('ticar.json');
+  // Decodifica o JSON em um array associativo
+  $data = json_decode($jsonFile, true);
+
+  // 24 linhas de cada vez
+  
+  // echo print_r($data);
+  // echo $inicio;
+  // echo " - ";
+  // echo $fim;
+
+  $i = 0;
+  // for ($i = 0; $i < count($data); $i++) {
+      for ($i = 0; $i < count($data); $i++) {
+
+    // Atribuição das variáveis
+    $mes = $data[$i]['data'];
+
+  $partes = explode('-', $mes);
+  $mes = $partes[1];
+
+  // echo $mes; // Isso imprimirá "08" Se ano for igual a 2023
+?>
+
+</tr>
+
+<?php
+  $cont = "";
+
+  usort($data[$i]['tics'], function ($a, $b) {
+      return strcmp($a['nome'], $b['nome']);
+  });
+
+  // echo "<br>--- total ";
+  // echo count($data[$i]['tics']);
+  // echo "<br> Inicio ";
+  // echo $inicio;
+  // echo "<br>";
+
+  // foreach($data[$i]['tics'] as $key => $tics):
+    
+    // echo "mes $mes";
+
+    $totalPages += count($data[$i]['tics']);
+
+    // echo "<br><br><br>pages $totalPages";
+
+    echo "
+    <script>
+      document.getElementById('inicio').textContent = '$inicio' 
+    </script>
+  ";
+
+  echo "
+  <script>
+    document.getElementById('fim').textContent = '$fim  ' 
+  </script>
+";
+
+    echo "
+      <script>
+        document.getElementById('pages').textContent = '$totalPages' 
+      </script>
+    ";
+
+    $j = 0;
+    // for ($i = 0; $i < count($data[$i]['tics']); $i++) {
+        for ($j = $inicio; $j < $fim; $j++) {
+          
+?>
+
+<!-- Primeira linha -->
+            <tr>
+
+              <td class="td-end d-none" rowspan="2">
+                <?php //echo $key4+1  ; ?> 
+                #
+              </td>
+              <td rowspan="2">
+                <div>
+                  <?php echo $data[$i]['tics'][$j]['nome']; ?>
+                </div>                
+              </td>
+
+              <td class="td-end">D</td>
+
+              <!-- (1) Janeiro -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '01'){
+                      if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '01'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '01'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '01'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '01'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+            <!-- (2) Fevereiro  -->
+            <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '02'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '02'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '02'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '02'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '02'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (3) Março -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '03'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '03'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '03'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '03'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '03'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (4) Abril -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '04'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '04'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '04'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '04'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '04'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (5) Maio -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '05'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '05'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '05'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '05'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '05'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (6) Junho -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '06'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '06'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '06'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '06'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '06'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (7) Julho -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '07'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '07'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '07'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '07'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '07'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (8) Agosto -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '08'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '08'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '08'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '08'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '08'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (9) Setembro -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '09'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '09'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '09'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '09'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '09'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (10) Outubro -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '10'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '10'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '10'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '10'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '10'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (11) Novembro -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '11'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '11'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '11'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '11'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '11'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (12) Dezembro -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '12'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '12'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '12'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '12'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '12'){
+                    if($data[$i]['tics'][$j]['checkbox']['check1'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+            </tr>
+
+            <!-- linha 2 primeiro nome -->
+            <tr>
+              <td class="td-end">O</td>
+              <!-- (1) Janeiro -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '01'){
+                      if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '01'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '01'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '01'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '01'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+            <!-- (2) Fevereiro  -->
+            <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '02'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '02'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '02'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '02'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '02'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (3) Março -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '03'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '03'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '03'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '03'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '03'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (4) Abril -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '04'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '04'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '04'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '04'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '04'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (5) Maio -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '05'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '05'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '05'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '05'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '05'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (6) Junho -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '06'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '06'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '06'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '06'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '06'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (7) Julho -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '07'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '07'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '07'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '07'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '07'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (8) Agosto -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '08'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '08'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '08'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '08'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '08'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (9) Setembro -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '09'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '09'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '09'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '09'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '09'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (10) Outubro -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '10'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '10'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '10'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '10'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '10'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (11) Novembro -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '11'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '11'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '11'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '11'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '11'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+
+              <!-- (12) Dezembro -->
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '1' && $mes == '12'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '2' && $mes == '12'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '3' && $mes == '12'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td>
+                <?php 
+                  if($data[$i]['sabado'] == '4' && $mes == '12'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+              <td class="td-end">
+                <?php 
+                  if($data[$i]['sabado'] == '5' && $mes == '12'){
+                    if($data[$i]['tics'][$j]['checkbox']['check2'] == 'true'){
+                        echo 'x';
+                      }
+                  }
+                ?>
+              </td>
+            </tr>
+
+                <?php } ?>
+
+            <?php } ?>
+
+          </table>
+
+          <div class="ms-5 my-3 border border-dark border-2 ps-3" style="width: 45%;">
+            <ul class="pb-0 m-0">
+              <li style="font-size: 0.9em;">
+                  <b> 
+                    Inserir no Mapa os nomes de todos membros batizados e dos não batizados.
+                    Acrescer os recens-batizados.
+                  </b>
+              </li>
+              <li style="font-size: 0.9em;">
+                <b>
+                  Todo membro será ajudado pela comissão de Mordomia, 
+                  tão logo que se registe o bloqueio da devolução sistemática.
+                </b>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    <!-- End lista feita -->
+
+    <!-- <div class="py-3 ps-3">
+        <button class="btn btn-sm btn-success" onclick="">Guardar Pagina</button>
+    </div> -->
+
+
+    <div id="Exportar" class="fixed-top d-flex d-none" style="justify-content: center; align-items: center; height: 100vh;">
+        <div class="modal-exportar bg-success col-3 rounded-2 border border-dark border-1" style="height: 70%; box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.7);">
+            <div>
+                <div class="row px-2">
+                    <div class="col-6">
+                        <h5 class="invisible">Exportar</h5>
+                    </div>
+                    <div class="col-6 text-end pt-2">
+                        <h5><button class="btn" onclick="hideExportar()"><b>X</b></button></h5>
+                    </div>
+                </div>
+                <div class="ps-4" >
+                    <h5>Exportar</h5>
+                    <a href=""><p class="mb-1" style="color: #000;">» Exportar nomes</p></a>
+                    <a href=""><p style="color: #000;">» Exportar Tics</p></a>
+                </div>
+                <div style="padding-top: 16em; opacity: 0.6;">
+                    <p class="text-center">
+                        by: <a href="http://devaholic.ao" style="color: blue; text-decoration: underline;">DevAholic</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <?php
+    // Verifica se o arquivo existe
+    $nomeArquivo = 'nomes.json';
+    if (!file_exists($nomeArquivo)) {
+        die("O arquivo $nomeArquivo não existe.");
+    }
+
+    // Lê o conteúdo do arquivo
+    $jsonString = file_get_contents($nomeArquivo);
+
+    // Decodifica o JSON para uma variável PHP
+    $nomesArray = json_decode($jsonString, true);
+
+    $nomesJson = json_encode($nomesArray);
+
+    // Verifica se houve algum erro na decodificação
+    if ($nomesArray === null && json_last_error() !== JSON_ERROR_NONE) {
+        die("Erro ao decodificar o JSON: " . json_last_error_msg());
+    }
+
+    // Agora, $nomesArray contém o conteúdo do arquivo JSON
+    // print_r($nomesArray);
+?>
+
+<script>
+var nomes1 = []
+
+var dados = <?php echo $nomesJson; ?>;
+console.log(dados);
+
+dados.forEach(el => {
+    nomes1.push(el.nome)
+    console.log("nome: " + nomes1)
+})
+
+// Array de nomes (pode ser qualquer array que desejar)
+const nomes = nomes1
+
+// Função para atualizar a lista de nomes filtrados
+function atualizarListaFiltrada(filtro) {
+  const lista = document.getElementById("nomes-lista");
+  lista.innerHTML = "";
+
+  if (filtro.trim() === "") {
+    lista.style.display = "none"; // Oculta a lista se o filtro estiver vazio
+  } else {
+    const nomesFiltrados = nomes.filter((nome) =>
+      nome.toLowerCase().includes(filtro.toLowerCase())
+    );
+
+    nomesFiltrados.forEach((nome) => {
+      const li = document.createElement("p");
+      li.textContent = nome;
+      lista.appendChild(li);
+    });
+
+    lista.style.display = "block"; // Mostra a lista se houver nomes filtrados
+  }
+}
+
+// Função para lidar com o evento de input no campo de filtro
+function handleFiltroChange() {
+  const filtro = document.getElementById("filtro").value;
+  atualizarListaFiltrada(filtro);
+}
+
+// Adicionar um event listener para o campo de filtro
+document.getElementById("filtro").addEventListener("input", handleFiltroChange);
+</script>
+
+    <script>
+      function goBack() {
+          window.history.back();
+      }
+  </script>
+
+
+<script>
+    // Seus dados JSON (exemplo)
+    var dados = [
+        { "id": 1, "nome": "Item 1" },
+        { "id": 2, "nome": "Item 2" },
+        // ... (outros itens)
+    ];
+
+    var itemsPerPage = 10;
+    var currentPage = 1;
+
+    var container = document.getElementById('data-container');
+    var previousButton = document.getElementById('previous');
+    var nextButton = document.getElementById('next');
+
+    function displayData(page) {
+        container.innerHTML = '';
+
+        var startIndex = (page - 1) * itemsPerPage;
+        var endIndex = startIndex + itemsPerPage;
+
+        for (var i = startIndex; i < endIndex && i < dados.length; i++) {
+            var item = dados[i];
+            var itemDiv = document.createElement('div');
+            itemDiv.textContent = `ID: ${item.id}, Nome: ${item.nome}`;
+            container.appendChild(itemDiv);
+        }
+
+        previousButton.disabled = page === 1;
+        nextButton.disabled = endIndex >= dados.length;
+    }
+
+    displayData(currentPage);
+
+    previousButton.addEventListener('click', function () {
+        if (currentPage > 1) {
+            currentPage--;
+            displayData(currentPage);
+        }
+    });
+
+    nextButton.addEventListener('click', function () {
+        if (currentPage * itemsPerPage < dados.length) {
+            currentPage++;
+            displayData(currentPage);
+        }
+    });
+</script>
+
+<script src="cdnjs/html2pdf.bundle.min.js"></script>
+
+<script>
+    function gerarPDF() {
+        const element = document.getElementById('meuConteudo');
+        const opt = {
+            margin: 0,
+            filename: 'mordomia_pagina.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 10 },
+            jsPDF: { unit: 'px', format: 'a4', orientation: 'landscape' }
+        };
+
+        html2pdf().from(element).set(opt).save();
+    }
+
+    gerarPDF()
+</script>
+
+  <script>
+        function showExportar() {
+            document.getElementById('Exportar').classList.remove('d-none');
+        }
+        
+        function hideExportar() {
+            document.getElementById('Exportar').classList.add('d-none');
+        }
+    </script>
+</body>
+</html>

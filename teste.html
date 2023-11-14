@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convertendo para PDF</title>
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+
+    <style>
+        .ola {
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+    <div class="col-12" id="meuConteudo">
+        <div class="fixed-to">
+            <div>
+                <img src="assets/logo.jpg" alt="" style="width: 200px;">
+            </div>
+            <div class="row bg-dark px-2">
+                <div class="col-8">
+            <!-- Nova navbar -->
+            <div class="" style="color: #fff;">
+            <div class="py-3 ">
+                <button class="btn btn-sm btn-dark" style="background-color: #707070;" onclick="goBack()">
+                    〈 voltar
+                </button>
+                <a href="index.php">
+                    <button class="btn btn-sm btn-dark" style="background-color: #707070;">
+                        Nome
+                    </button>
+                </a>
+                <a href="ticar.php"><button class="btn btn-sm btn-dark" style="background-color: #707070;">
+                    Ticar
+                </button></a>
+                <a href="lista-completa.php"><button class="btn btn-sm btn-dark" style="background-color: rgb(194, 77, 77);">
+                    Folha Completa
+                </button></a>
+                <button class="btn btn-sm btn-dark" style="background-color: #707070; opacity: 0.7;">
+                    Importar
+                </button>
+                <button class="btn btn-sm btn-dark" style="background-color: #707070; opacity: 0.7;">
+                    Exportar
+                </button>
+            </div>
+            <h5>Folha de controle de Fidelidade</h5>
+            <div class="">
+            <!-- Lista Feita -->
+            <div class="col-6"><h5 class="py-3">Folha Completa</h5></div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+    <button onclick="gerarPDF()">Gerar PDF</button>
+
+    <script src="cdnjs/html2pdf.bundle.min.js"></script>
+
+    <script>
+        function gerarPDF() {
+            const element = document.getElementById('meuConteudo');
+            const opt = {
+                margin: 0,
+                filename: 'meuDocumento.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'px', format: 'a4', orientation: 'landscape' }
+            };
+
+            html2pdf().from(element).set(opt).save();
+        }
+    </script>
+</body>
+</html>
+

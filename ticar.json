@@ -1,0 +1,94 @@
+[
+    {
+        "sabado": "1",
+        "data": "2023-02-04",
+        "tics": [
+            {
+                "nome": "Emilia Chilepa Artur",
+                "linha": 0,
+                "checkbox": {
+                    "check1": "true",
+                    "check2": "true"
+                }
+            },
+            {
+                "nome": "Bruno Ntyamba",
+                "linha": 0,
+                "checkbox": {
+                    "check1": "true",
+                    "check2": "true"
+                }
+            },
+            {
+                "nome": "Adriana N.Catimba",
+                "linha": 2,
+                "checkbox": {
+                    "check1": "false",
+                    "check2": "true"
+                }
+            },
+            {
+                "nome": "Amelia Belita",
+                "linha": 3,
+                "checkbox": {
+                    "check1": "true",
+                    "check2": "true"
+                }
+            },
+            {
+                "nome": "Artur Graciano",
+                "linha": 4,
+                "checkbox": {
+                    "check1": "false",
+                    "check2": "false"
+                }
+            },
+            {
+                "nome": "Cleide R. A. Alberto",
+                "linha": 5,
+                "checkbox": {
+                    "check1": "true",
+                    "check2": "false"
+                }
+            },
+            {
+                "nome": "Catombela Venancio",
+                "linha": 6,
+                "checkbox": {
+                    "check1": "true",
+                    "check2": "true"
+                }
+            }
+        ]
+    },
+    {
+        "sabado": "1",
+        "data": "2023-03-03",
+        "tics": [
+            {
+                "nome": "Carla Teresa Dangala",
+                "linha": 0,
+                "checkbox": {
+                    "check1": "false",
+                    "check2": "true"
+                }
+            },
+            {
+                "nome": "Catombela Venancio",
+                "linha": 1,
+                "checkbox": {
+                    "check1": "true",
+                    "check2": "true"
+                }
+            },
+            {
+                "nome": "Bruno Ntyamba",
+                "linha": 2,
+                "checkbox": {
+                    "check1": "0",
+                    "check2": "0"
+                }
+            }
+        ]
+    }
+]
